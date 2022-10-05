@@ -6,12 +6,13 @@ class AdvResponse {
   });
   late final int code;
   late final String msg;
-  late final List<dynamic> data;
+  late final List<Advertise> data;
 
   AdvResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['data'] as List;
     code = json['code'];
     msg = json['msg'];
-    data = json['data'];
+    data = list.map((e) => Advertise.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -23,19 +24,19 @@ class AdvResponse {
   }
 }
 
-class Adverise {
+class Advertise {
   late String cover;
   late String url;
   late bool isDisplay;
   late int id;
 
-  Adverise(
+  Advertise(
       {required this.cover,
       required this.url,
       required this.isDisplay,
       required this.id});
 
-  Adverise.fromJson(Map<String, dynamic> json) {
+  Advertise.fromJson(Map<String, dynamic> json) {
     cover = json['cover'];
     url = json['url'];
     isDisplay = json['isDisplay'];

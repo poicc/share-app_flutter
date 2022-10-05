@@ -1,6 +1,12 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:share_app/util/config.dart';
+import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:share_app/util/sp_utils.dart';
+
+import '../constant/base_common.dart';
+import '../model/adv_resp.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({Key? key}) : super(key: key);
@@ -11,34 +17,23 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
   late String nickname = '未登录';
   late String avatar =
       'https://images.pexels.com/photos/13538314/pexels-photo-13538314.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load';
 
-  List<String> imgList = [];
+  List<Advertise> imgList = [];
   final tabs = ['发现', '使用说明'];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   _getHttp() async {
-    // var dio = Dio();
-    // final response =
-    //     await dio.get('http://139.196.153.80:8083/advertisement/all');
-    // // print(response.toString());
-    // AdvResponse res = AdvResponse.fromJson(json.decode(response.toString()));
-    // print(res.data);
-    await SpUtils.getInstance();
+    var dio = Dio();
+    final response = await dio.get('${BaseCommon.BASE_URL}advertise/all');
+    AdvResponse res = AdvResponse.fromJson(json.decode(response.toString()));
+    print(res.data);
+    setState(() {
+      imgList = res.data;
+    });
     if (SpUtils.getString('nickname') != '') {
       setState(() {
-        // res.data.forEach((item) {
-        //   print(item['cover']);
-        //   imgList.add(item['cover']);
-        // });
         nickname = (SpUtils.getString('nickname'))!;
         avatar = (SpUtils.getString('avatar'))!;
       });
@@ -156,11 +151,22 @@ class _IndexPageState extends State<IndexPage>
   Widget _buildTableBarView() => TabBarView(
       controller: _tabController,
       children: tabs
-          .map((e) => Center(
-                  child: Text(
-                e,
-                style:
-                    const TextStyle(color: Config.primaryColor, fontSize: 20),
-              )))
+          .map(
+            (e) => Container(
+              height: 200.0,
+              child: Swiper(
+                containerHeight: 100.0,
+                itemBuilder: (BuildContext context, int index) {
+                  return Image.network(
+                    imgList[index].cover,
+                    fit: BoxFit.cover,
+                  );
+                },
+                itemCount: imgList.length,
+                pagination: const SwiperPagination(), //如果不填则不显示指示点
+                // control: SwiperControl(), //如果不填则不显示左右按钮
+              ),
+            ),
+          )
           .toList());
 }
