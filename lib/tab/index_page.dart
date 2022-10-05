@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:share_app/util/sp_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constant/base_common.dart';
 import '../model/adv_resp.dart';
@@ -37,6 +38,13 @@ class _IndexPageState extends State<IndexPage>
         nickname = (SpUtils.getString('nickname'))!;
         avatar = (SpUtils.getString('avatar'))!;
       });
+    }
+  }
+
+  Future<void> _launchUrl(url) async {
+    final Uri _url = Uri.parse(url);
+    if (!await launchUrl(_url)) {
+      throw 'Could not launch $_url';
     }
   }
 
@@ -161,6 +169,9 @@ class _IndexPageState extends State<IndexPage>
                     imgList[index].cover,
                     fit: BoxFit.cover,
                   );
+                },
+                onTap: (index) {
+                  _launchUrl(imgList[index].url);
                 },
                 itemCount: imgList.length,
                 pagination: const SwiperPagination(), //如果不填则不显示指示点
