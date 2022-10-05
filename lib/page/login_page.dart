@@ -7,7 +7,7 @@ import 'package:share_app/util/sp_utils.dart';
 
 import '../constant/base_common.dart';
 import '../model/login_resp.dart';
-import '../util/config.dart';
+import '../style/config.dart';
 
 final Color color1 = Config.primarySwatchColor.shade100;
 final Color color2 = Config.primarySwatchColor.shade200;

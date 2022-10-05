@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:share_app/util/config.dart';
+import 'package:share_app/style/config.dart';
 import 'package:share_app/util/sp_utils.dart';
 
-import '../util/colors.dart';
-import '../util/text_styles.dart';
+import '../style/colors.dart';
+import '../style/text_styles.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({Key? key}) : super(key: key);

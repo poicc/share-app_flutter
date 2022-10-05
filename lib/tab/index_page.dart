@@ -3,11 +3,16 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
+import 'package:share_app/model/notices_resp.dart';
+import 'package:share_app/style/iconfont.dart';
 import 'package:share_app/util/sp_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constant/base_common.dart';
 import '../model/adv_resp.dart';
+import '../model/share_resp.dart';
+import '../widget/showcase_widget.dart';
+import '../widget/yy_marquee_widget.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({Key? key}) : super(key: key);
@@ -18,25 +23,39 @@ class IndexPage extends StatefulWidget {
 
 class _IndexPageState extends State<IndexPage>
     with SingleTickerProviderStateMixin {
-  late String nickname = '未登录';
-  late String avatar =
+  late String _nickname = '未登录';
+  late String _avatar =
       'https://images.pexels.com/photos/13538314/pexels-photo-13538314.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load';
 
-  List<Advertise> imgList = [];
-  final tabs = ['发现', '使用说明'];
+  List<Advertise> _imgList = [];
+  String _notice = '';
+  List<Share> _share = [];
+  final _tabs = ['发现', '使用说明'];
 
   _getHttp() async {
     var dio = Dio();
     final response = await dio.get('${BaseCommon.BASE_URL}advertise/all');
+    final noticeResponse =
+        await dio.get('${BaseCommon.BASE_URL}notices/latest');
+    final shareResponse = await dio.get('${BaseCommon.BASE_URL}share/all');
+
     AdvResponse res = AdvResponse.fromJson(json.decode(response.toString()));
-    print(res.data);
+    NoticeResponse notice =
+        NoticeResponse.fromJson(json.decode(noticeResponse.toString()));
+
+    ShareResponse share =
+        ShareResponse.fromJson(json.decode(shareResponse.toString()));
+
+    print(share.data);
     setState(() {
-      imgList = res.data;
+      _imgList = res.data;
+      _notice = notice.data.content;
+      _share = share.data.shareList;
     });
     if (SpUtils.getString('nickname') != '') {
       setState(() {
-        nickname = (SpUtils.getString('nickname'))!;
-        avatar = (SpUtils.getString('avatar'))!;
+        _nickname = (SpUtils.getString('nickname'))!;
+        _avatar = (SpUtils.getString('avatar'))!;
       });
     }
   }
@@ -54,7 +73,7 @@ class _IndexPageState extends State<IndexPage>
   void initState() {
     super.initState();
     _getHttp();
-    _tabController = TabController(vsync: this, length: tabs.length);
+    _tabController = TabController(vsync: this, length: _tabs.length);
   }
 
   @override
@@ -72,11 +91,11 @@ class _IndexPageState extends State<IndexPage>
             height: 50,
             padding: const EdgeInsets.all(10),
             child: CircleAvatar(
-              backgroundImage: NetworkImage(avatar),
+              backgroundImage: NetworkImage(_avatar),
             ),
           ),
           title: Text(
-            nickname,
+            _nickname,
             // style: const TextStyle(color: Colors.black),
           ),
           centerTitle: false,
@@ -102,47 +121,7 @@ class _IndexPageState extends State<IndexPage>
           bottom: _buildTabBar(),
           // backgroundColor: Colors.grey.shade100,
         ),
-        body: _buildTableBarView()
-        // Column(
-        //   children: [
-        //     Container(
-        //       child: _buildTabBar(),
-        //     ),
-        // Stack(
-        //   children: [
-        // Center(
-        //   child: CarouselSlider(
-        //     options: CarouselOptions(
-        //       height: 200.0,
-        //       autoPlay: true,
-        //       autoPlayInterval: const Duration(seconds: 3),
-        //       autoPlayAnimationDuration: const Duration(milliseconds: 800),
-        //       autoPlayCurve: Curves.fastOutSlowIn,
-        //       enlargeCenterPage: true,
-        //     ),
-        //     items: imgList.map((i) {
-        //       return Builder(
-        //         builder: (BuildContext context) {
-        //           return Container(
-        //             width: MediaQuery.of(context).size.width,
-        //             margin: const EdgeInsets.symmetric(horizontal: 5.0),
-        //             decoration: BoxDecoration(
-        //               image: DecorationImage(
-        //                 image: NetworkImage(i),
-        //                 fit: BoxFit.cover,
-        //               ),
-        //             ),
-        //           );
-        //         },
-        //       );
-        //     }).toList(),
-        //   ),
-        // ),
-        //   ],
-        // ),
-        //   ],
-        // ),
-        );
+        body: _buildTableBarView());
   }
 
   TabBar _buildTabBar() {
@@ -152,32 +131,89 @@ class _IndexPageState extends State<IndexPage>
       indicatorColor: Colors.white,
       labelColor: Colors.white,
       unselectedLabelColor: Colors.white,
-      tabs: tabs.map((e) => Tab(text: e)).toList(),
+      tabs: _tabs.map((e) => Tab(text: e)).toList(),
     );
   }
 
   Widget _buildTableBarView() => TabBarView(
       controller: _tabController,
-      children: tabs
+      children: _tabs
           .map(
-            (e) => Container(
-              height: 200.0,
-              child: Swiper(
-                containerHeight: 100.0,
-                itemBuilder: (BuildContext context, int index) {
-                  return Image.network(
-                    imgList[index].cover,
-                    fit: BoxFit.cover,
-                  );
-                },
-                onTap: (index) {
-                  _launchUrl(imgList[index].url);
-                },
-                itemCount: imgList.length,
-                pagination: const SwiperPagination(), //如果不填则不显示指示点
-                // control: SwiperControl(), //如果不填则不显示左右按钮
-              ),
+            (e) => ListView(
+              children: [
+                SizedBox(
+                  height: 200.0,
+                  child: Swiper(
+                    containerHeight: 100.0,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Image.network(
+                        _imgList[index].cover,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    onTap: (index) {
+                      _launchUrl(_imgList[index].url);
+                    },
+                    itemCount: _imgList.length,
+                    pagination: const SwiperPagination(), //如果不填则不显示指示点
+                    // control: SwiperControl(), //如果不填则不显示左右按钮
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10.0),
+                  alignment: Alignment.center,
+                  // width: no,
+                  height: 32,
+                  child: Row(
+                    children: [
+                      const Icon(IconFont.icon_gonggao),
+                      buildMarqueeWidget(),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10.0),
+                  child: GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 30.0,
+                      crossAxisSpacing: 10.0,
+                    ),
+                    shrinkWrap: true,
+                    itemCount: _share.length,
+                    itemBuilder: (BuildContext context, int index) => Wrap(
+                      children: [
+                        ShowcaseWidget(share: _share[index]),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           )
           .toList());
+
+  Widget buildMarqueeWidget() {
+    ///上下轮播 安全提示
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: YYMarquee(
+          stepOffset: 200.0,
+          duration: const Duration(seconds: 3),
+          paddingLeft: 180.0,
+          children: [
+            Text(
+              _notice,
+              style: const TextStyle(
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

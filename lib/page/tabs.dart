@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:share_app/util/config.dart';
+import 'package:share_app/style/config.dart';
 
 import '../tab/index_page.dart';
 import '../tab/user_page.dart';
