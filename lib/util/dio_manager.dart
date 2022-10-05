@@ -53,7 +53,7 @@ class Http {
     Map<String, dynamic>? headers;
     // 从getx或者sputils中获取
     headers = {
-      'X-Token': '${BaseCommon.token}',
+      'X-Token': '${BaseCommon().get()}',
     };
     return headers;
   }

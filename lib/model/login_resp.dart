@@ -6,9 +6,53 @@ class LoginResponse {
   });
   late final int code;
   late final String msg;
-  late final Data data;
+  late final Login data;
 
   LoginResponse.fromJson(Map<String, dynamic> json) {
+    code = json['code'];
+    msg = json['msg'];
+    data = Login.fromJson(json['data']);
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['code'] = code;
+    _data['msg'] = msg;
+    _data['data'] = data.toJson();
+    return _data;
+  }
+}
+
+class Login {
+  late final String token;
+  late final int userId;
+
+  Login({required this.token, required this.userId});
+
+  Login.fromJson(Map<String, dynamic> json) {
+    token = json['token'];
+    userId = json['userId'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['token'] = token;
+    _data['userId'] = userId;
+    return _data;
+  }
+}
+
+class UserResponse {
+  UserResponse({
+    required this.code,
+    required this.msg,
+    required this.data,
+  });
+  late final int code;
+  late final String msg;
+  late final Data data;
+
+  UserResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     msg = json['msg'];
     data = Data.fromJson(json['data']);

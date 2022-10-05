@@ -1,11 +1,9 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:share_app/constant/base_common.dart';
+import 'package:share_app/util/http_utils.dart';
 import 'package:share_app/util/sp_utils.dart';
 
-import '../constant/base_common.dart';
 import '../model/login_resp.dart';
 import '../style/config.dart';
 
@@ -45,15 +43,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future _login() async {
-    Dio dio = Dio();
-    var apiLogin = "${BaseCommon.BASE_URL}users/login";
+    var apiLogin = "users/login";
 
-    var res = await dio.post(
+    var res = await HttpUtils.post(
       apiLogin,
       data: {"username": username, "password": password},
     );
 
-    LoginResponse resp = LoginResponse.fromJson(json.decode(res.toString()));
+    LoginResponse resp = LoginResponse.fromJson(res);
 
     var msg = resp.msg;
     var code = resp.code;
@@ -62,9 +59,17 @@ class _LoginPageState extends State<LoginPage> {
     return code;
   }
 
-  void _setInfo(data) {
-    SpUtils.setString('nickname', data.nickname);
-    SpUtils.setString('avatar', data.avatar);
+  void _setInfo(data) async {
+    SpUtils.setString('token', data.token);
+    print(data.token);
+    BaseCommon().set();
+    var res = await HttpUtils.get(
+      'users/${data.userId}',
+    );
+
+    UserResponse resp = UserResponse.fromJson(res);
+    SpUtils.set("avatar", resp.data.avatar);
+    SpUtils.set("nickname", resp.data.nickname);
   }
 
   @override

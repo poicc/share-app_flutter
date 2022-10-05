@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constant/base_common.dart';
 import '../model/adv_resp.dart';
 import '../model/share_resp.dart';
+import '../page/share_detail.dart';
 import '../widget/showcase_widget.dart';
 import '../widget/yy_marquee_widget.dart';
 
@@ -193,23 +194,7 @@ class _IndexPageState extends State<IndexPage>
                           children: [
                             buildSwiper(),
                             buildNotice(),
-                            GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 30.0,
-                                crossAxisSpacing: 10.0,
-                              ),
-                              shrinkWrap: true,
-                              itemCount: shares.length,
-                              itemBuilder: (BuildContext context, int index) =>
-                                  Wrap(
-                                children: [
-                                  ShowcaseWidget(share: shares[index]),
-                                ],
-                              ),
-                            ),
+                            buildShare(shares),
                           ],
                         ),
                       ),
@@ -223,6 +208,7 @@ class _IndexPageState extends State<IndexPage>
           )
           .toList());
 
+  // 轮播区域
   Widget buildSwiper() {
     return SizedBox(
       height: 200.0,
@@ -244,6 +230,7 @@ class _IndexPageState extends State<IndexPage>
     );
   }
 
+  // 公告区域
   Widget buildNotice() {
     return Container(
       margin: const EdgeInsets.all(10.0),
@@ -254,6 +241,35 @@ class _IndexPageState extends State<IndexPage>
         children: [
           const Icon(IconFont.icon_gonggao),
           buildMarqueeWidget(),
+        ],
+      ),
+    );
+  }
+
+  // 卡片区域
+  Widget buildShare(List<Share> shares) {
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 30.0,
+        crossAxisSpacing: 10.0,
+      ),
+      shrinkWrap: true,
+      itemCount: shares.length,
+      itemBuilder: (BuildContext context, int index) => Wrap(
+        children: [
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShareDetail(share: shares[index]),
+                ),
+              );
+            },
+            child: ShowcaseWidget(share: shares[index]),
+          ),
         ],
       ),
     );

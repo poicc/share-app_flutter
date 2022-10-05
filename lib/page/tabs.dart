@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_app/style/config.dart';
+import 'package:share_app/style/iconfont.dart';
 
 import '../tab/index_page.dart';
 import '../tab/user_page.dart';
@@ -31,15 +32,24 @@ class _TabsState extends State<Tabs> {
           });
         },
         iconSize: 36.0,
-        fixedColor: Config.primaryColor,
-        unselectedItemColor: Colors.grey.shade400,
+        fixedColor: Config.primarySwatchColor.shade300,
+        unselectedItemColor: Colors.grey.shade300,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "首页"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border), label: "投稿"),
+              icon: Icon(IconFont.icon_shouye),
+              activeIcon: Icon(IconFont.icon_shouye_copy),
+              label: "首页"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: "我的"),
+            icon: Icon(IconFont.icon_wengao),
+            activeIcon: Icon(IconFont.icon_wengao_copy),
+            label: "投稿",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(IconFont.icon_user),
+            activeIcon: Icon(IconFont.icon_user_copy),
+            label: "我的",
+          ),
         ],
       ),
     );

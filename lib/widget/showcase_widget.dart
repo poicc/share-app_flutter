@@ -30,22 +30,22 @@ class ShowcaseWidget extends StatelessWidget {
                         fit: BoxFit.fill,
                       )),
                 ),
-                share.isOriginal == 0
-                    ? Material(
-                        color: defaultTheme.primaryColor,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(8)),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(3.0),
-                          child: Text(
-                            '原创',
-                            style: TextStyle(color: Colors.white, fontSize: 13),
-                          ),
-                        ),
-                      )
-                    : Container()
+                Material(
+                  color: share.isOriginal == 0
+                      ? Colors.orange.shade700
+                      : defaultTheme.primaryColor,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.only(bottomRight: Radius.circular(8)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: Text(
+                      share.isOriginal == 0 ? '转载' : '原创',
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                    ),
+                  ),
+                )
               ],
             ),
             buildInfo(context),
