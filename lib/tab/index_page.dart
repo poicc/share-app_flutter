@@ -175,53 +175,25 @@ class _IndexPageState extends State<IndexPage>
       controller: _tabController,
       children: _tabs
           .map(
-            (e) => ListView(
-              children: [
-                SizedBox(
-                  height: 200.0,
-                  child: Swiper(
-                    containerHeight: 100.0,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Image.network(
-                        _imgList[index].cover,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                    onTap: (index) {
-                      _launchUrl(_imgList[index].url);
-                    },
-                    itemCount: _imgList.length,
-                    pagination: const SwiperPagination(), //如果不填则不显示指示点
-                    // control: SwiperControl(), //如果不填则不显示左右按钮
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(10.0),
-                  alignment: Alignment.center,
-                  // width: no,
-                  height: 32,
-                  child: Row(
-                    children: [
-                      const Icon(IconFont.icon_gonggao),
-                      buildMarqueeWidget(),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: FutureBuilder(
-                    future: _share,
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        List<Share> shares = snapshot.data;
-                        return SizedBox(
-                          height: snapshot.data.length * 211.toDouble(),
-                          child: SmartRefresher(
-                            controller: _refreshController,
-                            enablePullUp: true,
-                            onRefresh: _onRefresh,
-                            onLoading: _onLoading,
-                            child: GridView.builder(
+            (e) => Container(
+              padding: const EdgeInsets.all(10.0),
+              child: FutureBuilder(
+                future: _share,
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    List<Share> shares = snapshot.data;
+                    return SizedBox(
+                      height: snapshot.data.length * 211.toDouble(),
+                      child: SmartRefresher(
+                        controller: _refreshController,
+                        enablePullUp: true,
+                        onRefresh: _onRefresh,
+                        onLoading: _onLoading,
+                        child: ListView(
+                          children: [
+                            buildSwiper(),
+                            buildNotice(),
+                            GridView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
@@ -238,18 +210,54 @@ class _IndexPageState extends State<IndexPage>
                                 ],
                               ),
                             ),
-                          ),
-                        );
-                      } else {
-                        return const CupertinoActivityIndicator();
-                      }
-                    },
-                  ),
-                ),
-              ],
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const CupertinoActivityIndicator();
+                  }
+                },
+              ),
             ),
           )
           .toList());
+
+  Widget buildSwiper() {
+    return SizedBox(
+      height: 200.0,
+      child: Swiper(
+        containerHeight: 100.0,
+        itemBuilder: (BuildContext context, int index) {
+          return Image.network(
+            _imgList[index].cover,
+            fit: BoxFit.cover,
+          );
+        },
+        onTap: (index) {
+          _launchUrl(_imgList[index].url);
+        },
+        itemCount: _imgList.length,
+        pagination: const SwiperPagination(), //如果不填则不显示指示点
+        // control: SwiperControl(), //如果不填则不显示左右按钮
+      ),
+    );
+  }
+
+  Widget buildNotice() {
+    return Container(
+      margin: const EdgeInsets.all(10.0),
+      alignment: Alignment.center,
+      // width: no,
+      height: 32,
+      child: Row(
+        children: [
+          const Icon(IconFont.icon_gonggao),
+          buildMarqueeWidget(),
+        ],
+      ),
+    );
+  }
 
   Widget buildMarqueeWidget() {
     ///上下轮播 安全提示
