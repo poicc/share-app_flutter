@@ -62,6 +62,8 @@ class ShowcaseWidget extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               share.title,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             Row(
