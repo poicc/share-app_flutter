@@ -66,6 +66,7 @@ class ShowcaseWidget extends StatelessWidget {
               maxLines: 1,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 14),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -73,18 +74,29 @@ class ShowcaseWidget extends StatelessWidget {
                   '${share.price}积分',
                   style: Theme.of(context).textTheme.caption,
                 ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    '兑换',
-                    style: Theme.of(context)
-                        .textTheme
-                        .caption
-                        ?.copyWith(color: defaultTheme.primaryColor),
+                SizedBox(
+                  width: 50.0,
+                  height: 30.0,
+                  child: TextButton(
+                    // style: ButtonStyle(
+                    //   shadowColor: MaterialStateProperty.all(Colors.grey),
+                    //   side: MaterialStateProperty.all(
+                    //     const BorderSide(color: Colors.grey, width: 0.6),
+                    //   ),
+                    // ),
+                    onPressed: () {},
+                    child: Text(
+                      '兑换',
+                      style: Theme.of(context)
+                          .textTheme
+                          .caption
+                          ?.copyWith(color: defaultTheme.primaryColor),
+                    ),
                   ),
                 ),
               ],
-            )
+            ),
+            const SizedBox(height: 5),
           ],
         ),
       );

@@ -19,6 +19,7 @@ class ShareDetail extends StatefulWidget {
 
 class _ShareDetailState extends State<ShareDetail> {
   late Share _share;
+  bool _isDui = false;
 
   @override
   void initState() {
@@ -69,39 +70,69 @@ class _ShareDetailState extends State<ShareDetail> {
             Text(
               _share.summary,
               style: summary,
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            // _isDui
+            //     ?
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 45.0,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  shadowColor: MaterialStateProperty.all(Colors.grey.shade300),
+                  side: MaterialStateProperty.all(
+                    BorderSide(color: Colors.grey.shade300, width: 0.6),
+                  ),
+                  backgroundColor: MaterialStateProperty.all(Colors.white),
+                ),
+                onPressed: () {},
+                child: const Text(
+                  '复制下载地址',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
             )
+            // : Container(),
           ],
         ),
       ),
-      bottomSheet: SafeArea(
-        child: Container(
-          height: 60.0,
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Text(
-                '¥积分',
-                style: summary,
+      bottomSheet: _isDui
+          ? Container()
+          : SafeArea(
+              child: Container(
+                height: 60.0,
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    const Text(
+                      '¥积分',
+                      style: summary,
+                    ),
+                    Text(
+                      '${_share.price}',
+                      style: summary.copyWith(color: linerColor4),
+                    ),
+                    const SizedBox(
+                      width: 40.0,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _isDui = true;
+                        });
+                      },
+                      child: const Text('兑换'),
+                    ),
+                    const SizedBox(
+                      width: 20.0,
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                '${_share.price}',
-                style: summary.copyWith(color: linerColor4),
-              ),
-              const SizedBox(
-                width: 40.0,
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('兑换'),
-              ),
-              const SizedBox(
-                width: 20.0,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

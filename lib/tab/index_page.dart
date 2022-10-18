@@ -176,44 +176,47 @@ class _IndexPageState extends State<IndexPage>
       controller: _tabController,
       children: _tabs
           .map(
-            (e) => Container(
-              padding: const EdgeInsets.all(10.0),
-              child: FutureBuilder(
-                future: _share,
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    List<Share> shares = snapshot.data;
-                    return SizedBox(
-                      height: snapshot.data.length * 211.toDouble(),
-                      child: SmartRefresher(
-                        controller: _refreshController,
-                        enablePullUp: true,
-                        onRefresh: _onRefresh,
-                        onLoading: _onLoading,
-                        child: ListView(
-                          children: [
-                            buildSwiper(),
-                            buildNotice(),
-                            buildShare(shares),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    return const CupertinoActivityIndicator();
-                  }
-                },
-              ),
-            ),
+            (e) => e == '发现'
+                ? Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: FutureBuilder(
+                      future: _share,
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          List<Share> shares = snapshot.data;
+                          return SizedBox(
+                            height: snapshot.data.length * 211.toDouble(),
+                            child: SmartRefresher(
+                              controller: _refreshController,
+                              enablePullUp: true,
+                              onRefresh: _onRefresh,
+                              onLoading: _onLoading,
+                              child: ListView(
+                                children: [
+                                  buildSwiper(),
+                                  buildNotice(),
+                                  buildShare(shares),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const CupertinoActivityIndicator();
+                        }
+                      },
+                    ),
+                  )
+                : const Center(child: Text('使用说明')),
           )
           .toList());
 
   // 轮播区域
   Widget buildSwiper() {
     return SizedBox(
-      height: 200.0,
+      height: 230.0,
       child: Swiper(
         containerHeight: 100.0,
+        autoplay: true,
         itemBuilder: (BuildContext context, int index) {
           return Image.network(
             _imgList[index].cover,
@@ -275,8 +278,8 @@ class _IndexPageState extends State<IndexPage>
     );
   }
 
+  //公告区域-组件
   Widget buildMarqueeWidget() {
-    ///上下轮播 安全提示
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
