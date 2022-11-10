@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share_app/page/login_page.dart';
 import 'package:share_app/page/tabs.dart';
+import 'package:share_app/page/update_page.dart';
 import 'package:share_app/style/themes.dart';
 import 'package:share_app/util/http_utils.dart';
 import 'package:share_app/util/sp_utils.dart';
@@ -34,15 +36,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      routes: {
-        '/index': (context) => const Tabs(),
-        '/login': (context) => const LoginPage(),
-      },
-      title: 'Flutter Demo',
-      theme: defaultTheme,
-      home: const Tabs(),
-    );
+    return ScreenUtilInit(
+        designSize: const Size(750, 1334),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp(
+            navigatorKey: navigatorKey,
+            routes: {
+              '/index': (context) => const Tabs(),
+              '/login': (context) => const LoginPage(),
+              '/update': (context) => const UpdatePage(),
+            },
+            title: 'Flutter Demo',
+            theme: defaultTheme,
+            home: const Tabs(),
+          );
+        });
   }
 }

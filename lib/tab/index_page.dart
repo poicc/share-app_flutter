@@ -12,6 +12,7 @@ import '../constant/base_common.dart';
 import '../model/adv_resp.dart';
 import '../model/share_resp.dart';
 import '../page/share_detail.dart';
+import '../style/config.dart';
 import '../widget/showcase_widget.dart';
 import '../widget/yy_marquee_widget.dart';
 
@@ -36,6 +37,10 @@ class _IndexPageState extends State<IndexPage>
       RefreshController(initialRefresh: false);
   int _page = 0;
   int _size = 6;
+  bool _isSearch = false;
+  late FocusNode _focusNode;
+  final TextEditingController _textEditingController = TextEditingController();
+  String searchContent = '';
 
   void _onRefresh() async {
     await Future.delayed(const Duration(milliseconds: 1000));
@@ -43,7 +48,6 @@ class _IndexPageState extends State<IndexPage>
       _page = 0;
       _size = 6;
     });
-    _getShare();
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
   }
@@ -67,7 +71,12 @@ class _IndexPageState extends State<IndexPage>
 
   Future<List<Share>> _getShare() async {
     final shareResponse = await HttpUtils.get('${BaseCommon.BASE_URL}share/all',
-        params: {'pageSize': _size, 'pageNum': _page, "isCheck": true});
+        params: {
+          'pageSize': _size,
+          'pageNum': _page,
+          "isCheck": true,
+          "title": searchContent
+        });
 
     ShareResponse share = ShareResponse.fromJson(shareResponse);
     return share.data.shareList;
@@ -85,6 +94,7 @@ class _IndexPageState extends State<IndexPage>
       _imgList = res.data;
       _notice = notice.data.content;
     });
+    await SpUtils.getInstance();
     if (SpUtils.getString('nickname') != '') {
       setState(() {
         _nickname = (SpUtils.getString('nickname'))!;
@@ -111,6 +121,7 @@ class _IndexPageState extends State<IndexPage>
     });
     _getHttp();
     _tabController = TabController(vsync: this, length: _tabs.length);
+    _focusNode = FocusNode();
   }
 
   @override
@@ -122,42 +133,128 @@ class _IndexPageState extends State<IndexPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: Container(
-            width: 50,
-            height: 50,
-            padding: const EdgeInsets.all(10),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(_avatar),
-            ),
-          ),
-          title: Text(
-            _nickname,
-            // style: const TextStyle(color: Colors.black),
-          ),
-          centerTitle: false,
-          actions: [
-            SizedBox(
-              width: 120,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
-                  Icon(
-                    Icons.tag,
+        appBar: _isSearch
+            ? AppBar(
+                titleSpacing: 0,
+                title: SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          height: double.infinity,
+                          margin: const EdgeInsets.only(left: 16),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Padding(padding: EdgeInsets.only(left: 8)),
+                              const Icon(
+                                Icons.search,
+                                color: Config.primarySwatchColor,
+                              ),
+                              const Padding(padding: EdgeInsets.only(left: 8)),
+                              Expanded(
+                                flex: 1,
+                                child: TextField(
+                                  textAlignVertical: TextAlignVertical.bottom,
+                                  controller: _textEditingController,
+                                  autofocus: true,
+                                  focusNode: _focusNode,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Config.primarySwatchColor,
+                                  ),
+                                  maxLines: 1,
+                                  decoration: const InputDecoration(
+                                    isCollapsed: true,
+                                    contentPadding:
+                                        EdgeInsets.only(top: 0, bottom: 0),
+                                    border: InputBorder.none,
+                                    hintText: '请输入标题',
+                                  ),
+                                  onSubmitted: (value) {
+                                    setState(() {
+                                      searchContent =
+                                          _textEditingController.text;
+                                      setState(() {
+                                        _share = _getShare();
+                                      });
+                                    });
+                                  },
+                                ),
+                              ),
+                              const Padding(padding: EdgeInsets.only(left: 8)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          _focusNode.unfocus();
+                          setState(() {
+                            _isSearch = false;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 16, right: 16),
+                          child: const Text("取消",
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white)),
+                        ),
+                      ),
+                    ],
                   ),
-                  Icon(
-                    Icons.search,
+                ),
+                bottom: _buildTabBar(),
+              )
+            : AppBar(
+                leading: Container(
+                  width: 50,
+                  height: 50,
+                  padding: const EdgeInsets.all(10),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(_avatar),
                   ),
-                  Icon(
-                    Icons.more_vert,
-                  ),
+                ),
+                title: Text(
+                  _nickname,
+                  // style: const TextStyle(color: Colors.black),
+                ),
+                centerTitle: false,
+                actions: [
+                  SizedBox(
+                    width: 120,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Icon(
+                          Icons.tag,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              _isSearch = true;
+                            });
+                          },
+                          child: const Icon(
+                            Icons.search,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.more_vert,
+                        ),
+                      ],
+                    ),
+                  )
                 ],
+                bottom: _buildTabBar(),
+                // backgroundColor: Colors.grey.shade100,
               ),
-            )
-          ],
-          bottom: _buildTabBar(),
-          // backgroundColor: Colors.grey.shade100,
-        ),
         body: _buildTableBarView());
   }
 

@@ -69,6 +69,7 @@ class _LoginPageState extends State<LoginPage> {
 
     UserResponse resp = UserResponse.fromJson(res);
     SpUtils.set("avatar", resp.data.avatar);
+    SpUtils.set("userId", data.userId);
     SpUtils.set("nickname", resp.data.nickname);
   }
 

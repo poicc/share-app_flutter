@@ -15,8 +15,7 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   late String nickname = '暂未登录';
-  late String avatar =
-      'https://img.ixintu.com/download/jpg/20200917/d38df2c52b6a439dff388445fa5a5050_512_512.jpg';
+  late String avatar = '';
   @override
   void initState() {
     super.initState();
@@ -75,28 +74,32 @@ class _UserPageState extends State<UserPage> {
                           right: 30,
                           top: 10,
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: Image.network(
-                            avatar,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        child: nickname == '暂未登录'
+                            ? null
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(30),
+                                child: Image.network(
+                                  avatar,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                       ),
                       Container(
                         alignment: Alignment.topCenter,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: linerColor4,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            "Flutter Developer",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+                        child: nickname == '暂未登录'
+                            ? null
+                            : Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 5),
+                                decoration: BoxDecoration(
+                                  color: linerColor4,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Text(
+                                  "Flutter Developer",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                       ),
                     ],
                   ),
@@ -214,11 +217,13 @@ class _UserPageState extends State<UserPage> {
           AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: const Icon(Icons.favorite),
+            leading: const Icon(Icons.notifications),
             actions: [
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/update');
+                },
+                icon: const Icon(Icons.edit),
               ),
               IconButton(
                 onPressed: () {
